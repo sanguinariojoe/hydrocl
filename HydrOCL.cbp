@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="HydrOCL" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/libhydrocl" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="lib/Debug" />
+				<Option object_output="obj/Debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-D_DEBUG" />
+				</Compiler>
+				<Linker>
+					<Add library="OgreMain_d" />
+					<Add library="hydrax_d" />
+					<Add directory="lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/libhydrocl" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="lib/Release" />
+				<Option object_output="obj/Release/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="OgreMain" />
+					<Add library="hydrax" />
+					<Add directory="lib" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-I/usr/include/OGRE" />
+			<Add option="-I/usr/include/CEGUI" />
+			<Add option="-I/usr/include/Hydrax" />
+			<Add option="-I./" />
+			<Add option="-I./include" />
+			<Add option="-fPIC" />
+			<Add option="-fmessage-length=0" />
+			<Add option="-fexceptions" />
+			<Add option="-fident" />
+			<Add directory="$(OGRE_HOME_MINGW)/include" />
+			<Add directory="$(OGRE_HOME_MINGW)/samples/include" />
+			<Add directory="$(OGRE_HOME_MINGW)/samples/refapp/include" />
+			<Add directory="include/HydrOCL" />
+		</Compiler>
+		<Linker>
+			<Add library="OpenCL" />
+			<Add directory="$(OGRE_HOME_MINGW)/lib" />
+			<Add directory="$(OGRE_HOME_MINGW)/bin/Debug" />
+			<Add directory="$(OGRE_HOME_MINGW)/bin/Release" />
+			<Add directory="../bin/$(TARGET_NAME)" />
+		</Linker>
+		<Unit filename="include/DummyNoise.h" />
+		<Unit filename="include/HydrOCLGrid.h" />
+		<Unit filename="include/hydroclUtils.h" />
+		<Unit filename="src/HydrOCLGrid.cpp" />
+		<Unit filename="src/hydroclUtils.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

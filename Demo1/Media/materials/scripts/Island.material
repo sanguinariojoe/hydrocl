@@ -1,0 +1,115 @@
+// Island unified Material - For Hydrax demo application
+// Jose Luis Cercós Pita
+
+vertex_program Island_VP_hlsl hlsl
+{
+	source Island.hlsl
+	entry_point main_vp
+	target vs_1_1
+}
+
+fragment_program Island_FP_hlsl hlsl
+{
+	source Island.hlsl
+	entry_point main_fp
+	target ps_2_0
+}
+
+vertex_program Island_VP_cg cg
+{
+	source Island.cg
+	entry_point main_vp
+	profiles vs_1_1 arbvp1
+}
+
+fragment_program Island_FP_cg cg
+{
+	source Island.cg
+	entry_point main_fp
+	profiles ps_2_0 arbfp1
+}
+
+vertex_program Island_VP_glsl glsl
+{
+	source Island.vert
+}
+
+fragment_program Island_FP_glsl glsl
+{
+	source Island.frag
+	default_params
+	{
+		param_named uNormalHeightMap1 int 0
+		param_named uDiffuseMap1 int 1
+		param_named uNormalHeightMap2 int 2
+		param_named uDiffuseMap2 int 3
+	}
+}
+
+//------------------------
+//Unified Definitions
+//------------------------
+vertex_program Island/VP unified
+{
+	delegate Island_VP_hlsl
+	//delegate Island_VP_cg
+	delegate Island_VP_glsl
+}
+
+fragment_program Island/FP unified
+{
+	delegate Island_FP_hlsl
+	//delegate Island_FP_cg
+	delegate Island_FP_glsl
+}
+
+
+material Island
+{
+   technique
+   {
+      pass
+      {
+         // Vertex program reference
+         vertex_program_ref Island/VP
+         {
+            param_named_auto uLightPosition light_position_object_space 0
+            param_named_auto uEyePosition camera_position_object_space
+            param_named_auto uWorldViewProj worldviewproj_matrix
+            
+            param_named uTexturesScale float 16.0
+         }
+
+         // Fragment program
+         fragment_program_ref Island/FP
+         {
+            param_named_auto uLightDiffuse light_diffuse_colour 0
+            param_named_auto uLightSpecular light_specular_colour 0
+            // Parallax Height scale and bias
+            param_named uScaleBias float4 0.04 -0.02 1.0 0.0
+         }
+
+         texture_unit
+         {
+            texture Sand.tga
+            tex_coord_set 0
+         }
+         texture_unit
+         {
+            texture Sand.png
+            tex_coord_set 1
+         }
+
+         texture_unit
+         {
+            texture SandGrass.tga
+            tex_coord_set 2
+         }
+         texture_unit
+         {
+            texture SandGrass.png
+            tex_coord_set 3
+         }
+      }
+   }
+}
