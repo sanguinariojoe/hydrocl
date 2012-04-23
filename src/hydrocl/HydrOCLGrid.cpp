@@ -334,6 +334,21 @@ namespace Hydrax{namespace Module
 		else if (mLastMinMax) {
             int i;
             cl_int clFlag=0;
+            // Recover data from server. We will update geometry now in order to allow OpenCL compute next time step
+            // while we wait for a new frame. So free surface height (y component) have one time step of delay.
+            //! @todo allow several devices usage
+            clFlag |= getData(mComQueue[0], hPos, mVertexes, mOptions.Complexity*mOptions.Complexity*sizeof( cl_float4 ));
+            clFlag |= getData(mComQueue[0], hNor, mNormals,  mOptions.Complexity*mOptions.Complexity*sizeof( cl_float4 ));
+            if(clFlag != CL_SUCCESS) {
+                HydraxLOG("Can't get data from device.");
+                return;
+            }
+            Mesh::POS_NORM_VERTEX* Vertices = static_cast<Mesh::POS_NORM_VERTEX*>(mVertices);
+            for(i=0;i<mOptions.Complexity*mOptions.Complexity;i++){
+                Vertices[i].x  = hPos[i].x; Vertices[i].y  = hPos[i].y; Vertices[i].z  = hPos[i].z;
+                Vertices[i].nx = hNor[i].x; Vertices[i].ny = hNor[i].y; Vertices[i].nz = hNor[i].z;
+            }
+			mHydrax->getMesh()->updateGeometry(mOptions.Complexity*mOptions.Complexity, mVertices);
             //! @todo allow several devices usage
             cl_uint2 N;
             N.x = (unsigned int)mOptions.Complexity;
@@ -393,22 +408,6 @@ namespace Hydrax{namespace Module
 
             _calculeNormals();
             _performChoppyWaves();
-
-            // Recover data from server
-            //! @todo allow several devices usage
-            clFlag |= getData(mComQueue[0], hPos, mVertexes, mOptions.Complexity*mOptions.Complexity*sizeof( cl_float4 ));
-            clFlag |= getData(mComQueue[0], hNor, mNormals,  mOptions.Complexity*mOptions.Complexity*sizeof( cl_float4 ));
-            if(clFlag != CL_SUCCESS) {
-                HydraxLOG("Can't get data from device.");
-                return;
-            }
-            Mesh::POS_NORM_VERTEX* Vertices = static_cast<Mesh::POS_NORM_VERTEX*>(mVertices);
-            for(i=0;i<mOptions.Complexity*mOptions.Complexity;i++){
-                Vertices[i].x  = hPos[i].x; Vertices[i].y  = hPos[i].y; Vertices[i].z  = hPos[i].z;
-                Vertices[i].nx = hNor[i].x; Vertices[i].ny = hNor[i].y; Vertices[i].nz = hNor[i].z;
-            }
-
-			mHydrax->getMesh()->updateGeometry(mOptions.Complexity*mOptions.Complexity, mVertices);
 		}
 
 		mLastPosition = RenderingCameraPos;
@@ -453,6 +452,22 @@ namespace Hydrax{namespace Module
         if(clFlag != CL_SUCCESS) {
             HydraxLOG("Geometry generator execution fail.");
             return false;
+        }
+        /* Recover data from server. We will update geometry now in order to allow OpenCL compute next time step
+         * while we wait for a new frame. So free surface height (y component) have one time step of delay,
+         * but vertexes position have been already updated (in order to avoid holes when camera is moved).
+         */
+        //! @todo allow several devices usage
+        clFlag |= getData(mComQueue[0], hPos, mVertexes, mOptions.Complexity*mOptions.Complexity*sizeof( cl_float4 ));
+        clFlag |= getData(mComQueue[0], hNor, mNormals,  mOptions.Complexity*mOptions.Complexity*sizeof( cl_float4 ));
+        if(clFlag != CL_SUCCESS) {
+            HydraxLOG("Can't get data from device.");
+            return false;
+        }
+        Mesh::POS_NORM_VERTEX* Vertices = static_cast<Mesh::POS_NORM_VERTEX*>(mVertices);
+        for(i=0;i<mOptions.Complexity*mOptions.Complexity;i++){
+            Vertices[i].x  = hPos[i].x; Vertices[i].y  = hPos[i].y; Vertices[i].z  = hPos[i].z;
+            Vertices[i].nx = hNor[i].x; Vertices[i].ny = hNor[i].y; Vertices[i].nz = hNor[i].z;
         }
         // Base plane set
         float h = mBasePlane.d;
@@ -504,20 +519,6 @@ namespace Hydrax{namespace Module
 
 		_calculeNormals();
 		_performChoppyWaves();
-
-        // Recover data from server
-        //! @todo allow several devices usage
-        clFlag |= getData(mComQueue[0], hPos, mVertexes, mOptions.Complexity*mOptions.Complexity*sizeof( cl_float4 ));
-        clFlag |= getData(mComQueue[0], hNor, mNormals,  mOptions.Complexity*mOptions.Complexity*sizeof( cl_float4 ));
-        if(clFlag != CL_SUCCESS) {
-            HydraxLOG("Can't get data from device.");
-            return false;
-        }
-        Mesh::POS_NORM_VERTEX* Vertices = static_cast<Mesh::POS_NORM_VERTEX*>(mVertices);
-        for(i=0;i<mOptions.Complexity*mOptions.Complexity;i++){
-            Vertices[i].x  = hPos[i].x; Vertices[i].y  = hPos[i].y; Vertices[i].z  = hPos[i].z;
-            Vertices[i].nx = hNor[i].x; Vertices[i].ny = hNor[i].y; Vertices[i].nz = hNor[i].z;
-        }
 
 		return true;
 	}
