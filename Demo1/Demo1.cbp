@@ -19,8 +19,7 @@
 				<Linker>
 					<Add library="OgreMain_d" />
 					<Add library="OIS_d" />
-					<Add library="hydrax_d" />
-					<Add library="hydrocl_d" />
+					<Add library="Hydrax_d" />
 					<Add directory="lib" />
 				</Linker>
 			</Target>
@@ -40,7 +39,6 @@
 					<Add library="OgreMain" />
 					<Add library="OIS" />
 					<Add library="hydrax" />
-					<Add library="hydrocl" />
 					<Add directory="lib" />
 				</Linker>
 			</Target>
@@ -48,10 +46,6 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-I/usr/include/OGRE" />
-			<Add option="-I/usr/include/Hydrax" />
-			<Add option="-I/usr/include/hydrocl" />
-			<Add option="-I/usr/include/CL" />
-			<Add option="-I./" />
 			<Add option="-I./include" />
 			<Add option="-fmessage-length=0" />
 			<Add option="-fexceptions" />
@@ -64,7 +58,6 @@
 			<Add directory="include/Hydrax" />
 		</Compiler>
 		<Linker>
-			<Add library="OpenCL" />
 			<Add directory="$(OGRE_HOME_MINGW)/lib" />
 			<Add directory="$(OGRE_HOME_MINGW)/bin/Debug" />
 			<Add directory="$(OGRE_HOME_MINGW)/bin/Release" />

@@ -64,11 +64,12 @@
 			<Add directory="../bin/$(TARGET_NAME)" />
 		</Linker>
 		<Unit filename="include/hydrocl.h" />
-		<Unit filename="include/hydrocl/DummyNoise.h" />
 		<Unit filename="include/hydrocl/HydrOCLGrid.h" />
+		<Unit filename="include/hydrocl/HydrOCLNoise.h" />
 		<Unit filename="include/hydrocl/HydrOCLPerlin.h" />
 		<Unit filename="include/hydrocl/HydrOCLUtils.h" />
 		<Unit filename="src/hydrocl/HydrOCLGrid.cpp" />
+		<Unit filename="src/hydrocl/HydrOCLNoise.cpp" />
 		<Unit filename="src/hydrocl/HydrOCLPerlin.cpp" />
 		<Unit filename="src/hydrocl/HydrOCLUtils.cpp" />
 		<Extensions>

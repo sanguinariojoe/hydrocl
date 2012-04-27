@@ -27,7 +27,7 @@ http://www.cnblogs.com/ArenAK/archive/2007/11/07/951713.html
 
 #include <hydrocl/HydrOCLGrid.h>
 #include <hydrocl/HydrOCLUtils.h>
-#include <hydrocl/HydrOCLPerlin.h>
+#include <hydrocl/HydrOCLNoise.h>
 
 #ifndef _def_MaxFarClipDistance
     #define _def_MaxFarClipDistance 99999
@@ -36,7 +36,7 @@ http://www.cnblogs.com/ArenAK/archive/2007/11/07/951713.html
 namespace Hydrax{namespace Module
 {
 	HydrOCL::HydrOCL(Hydrax *h, const Ogre::Plane &BasePlane)
-		: Module("HydrOCL", new Noise::HydrOCLPerlin(), Mesh::Options(256, Size(0), Mesh::VT_POS_NORM), MaterialManager::NM_VERTEX)
+		: Module("HydrOCL", new Noise::HydrOCLNoise(), Mesh::Options(256, Size(0), Mesh::VT_POS_NORM), MaterialManager::NM_VERTEX)
 		, mHydrax(h)
 		, mVertices(0)
 		, mVerticesChoppyBuffer(0)
@@ -70,7 +70,7 @@ namespace Hydrax{namespace Module
 	}
 
 	HydrOCL::HydrOCL(Hydrax *h, const Ogre::Plane &BasePlane, const Options &Options)
-		: Module("HydrOCL", new Noise::HydrOCLPerlin(), Mesh::Options(Options.Complexity, Size(0), Mesh::VT_POS_NORM), MaterialManager::NM_VERTEX)
+		: Module("HydrOCL", new Noise::HydrOCLNoise(), Mesh::Options(Options.Complexity, Size(0), Mesh::VT_POS_NORM), MaterialManager::NM_VERTEX)
 		, mHydrax(h)
 		, mVertices(0)
 		, mVerticesChoppyBuffer(0)
@@ -197,7 +197,7 @@ namespace Hydrax{namespace Module
             return;
         }
         // Send OpenCL stuff to noise module.
-        if(! ((Noise::HydrOCLPerlin*)mNoise)->setupOpenCL(mNumberOfDevices, mContext, mDevices, mComQueue)){
+        if(! ((Noise::HydrOCLNoise*)mNoise)->setupOpenCL(mNumberOfDevices, mContext, mDevices, mComQueue)){
             remove();
             return;
         }
@@ -390,7 +390,7 @@ namespace Hydrax{namespace Module
                 return;
             }
             // Noise computation
-            ((Noise::HydrOCLPerlin*)mNoise)->setHeight(mVertexes, N, RenderingCameraPos);
+            ((Noise::HydrOCLNoise*)mNoise)->setHeight(mVertexes, N, RenderingCameraPos);
             // Smooth the height data
             if (mOptions.Smooth) {
                 clFlag |= sendArgument(kSmooth,  0, sizeof(cl_mem   ), (void*)&mVertexes);
@@ -484,7 +484,7 @@ namespace Hydrax{namespace Module
             return false;
         }
         // Noise computation
-        ((Noise::HydrOCLPerlin*)mNoise)->setHeight(mVertexes, N, WorldPos);
+        ((Noise::HydrOCLNoise*)mNoise)->setHeight(mVertexes, N, WorldPos);
         // Backup
         if (mOptions.ChoppyWaves) {
             clFlag |= sendArgument(kCopy,  0, sizeof(cl_mem   ), (void*)&mChoppyVertexes);

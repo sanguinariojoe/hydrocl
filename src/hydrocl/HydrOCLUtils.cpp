@@ -142,7 +142,7 @@ cl_kernel loadKernelFromFile(cl_context clContext, cl_device_id clDevice,
             HydraxLOG("\tNot enought kernel resources.");
         }
         else if(clFlag == CL_INVALID_KERNEL_NAME) {
-            HydraxLOG(Ogre::String("\tCan't find ") + entryPoint + "function.");
+            HydraxLOG(Ogre::String("\tCan't find ") + entryPoint + " function.");
         }
         else if(clFlag == CL_INVALID_KERNEL_DEFINITION) {
             HydraxLOG(Ogre::String("\tInvalid function: ") + entryPoint + ". Did you forgive __kernel modifier?");

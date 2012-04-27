@@ -23,6 +23,6 @@
 
 // Include needed stuff
 #include<hydrocl/HydrOCLGrid.h>
-#include<hydrocl/HydrOCLPerlin.h>
+#include<hydrocl/HydrOCLNoise.h>
 
 #endif // HYDROCL_H_INCLUDED

@@ -116,10 +116,11 @@ int readTexelLinearDual(int2 uv, _g int* noise){
  * @param vertex Geometry vertexes.
  * @param noise Perlin noise.
  * @param world Rendering camera position.
+ * @param strength Perlin noise strength (amplitude multiplier).
  * @param magnitude Perlin octaves allocator.
  * @param N Total number of vertices at each direction.
  */
-__kernel void height( _g vec* vertex, _g int* noise, vec world, float magnitude, uint octaves, uint2 N )
+__kernel void height( _g vec* vertex, _g int* noise, vec world, float strength, float magnitude, uint octaves, uint2 N )
 {
 	uint i  = get_global_id(0);
 	uint j  = get_global_id(1);
@@ -142,7 +143,7 @@ __kernel void height( _g vec* vertex, _g int* noise, vec world, float magnitude,
 		r_noise += np_size_sq;
 	}
 
-	vertex[id].y += 3.5f*value/noise_magnitude;
+	vertex[id].y += strength*value/noise_magnitude;
 
 	// ---- A ---- Your code here ---- A ----
 	// ---- | ------------------------ | ----

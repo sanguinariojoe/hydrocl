@@ -33,7 +33,7 @@ http://graphics.cs.lth.se/theses/projects/projgrid/
 namespace Hydrax{namespace Noise
 {
 	HydrOCLPerlin::HydrOCLPerlin()
-		: Noise("HydrOCLPerlin", false)
+		: Noise("HydrOCLNoise", false)
 		, time(0)
 		, r_noise(0)
 		, magnitude(n_dec_magn * 0.085f)
@@ -47,7 +47,7 @@ namespace Hydrax{namespace Noise
 	}
 
 	HydrOCLPerlin::HydrOCLPerlin(const Options &Options)
-		: Noise("HydrOCLPerlin", false)
+		: Noise("HydrOCLNoise", false)
 		, mOptions(Options)
 		, time(0)
 		, r_noise(0)
@@ -119,7 +119,8 @@ namespace Hydrax{namespace Noise
 		Data += CfgFileManager::_getCfgString("Perlin_Scale", mOptions.Scale);
 		Data += CfgFileManager::_getCfgString("Perlin_Falloff", mOptions.Falloff);
 		Data += CfgFileManager::_getCfgString("Perlin_Animspeed", mOptions.Animspeed);
-		Data += CfgFileManager::_getCfgString("Perlin_Timemulti", mOptions.Timemulti); Data += "\n";
+		Data += CfgFileManager::_getCfgString("Perlin_Timemulti", mOptions.Timemulti);
+		Data += CfgFileManager::_getCfgString("Perlin_Strength", mOptions.GPU_Strength); Data += "\n";
 	}
 
 	bool HydrOCLPerlin::loadCfg(Ogre::ConfigFile &CfgFile)
@@ -133,7 +134,9 @@ namespace Hydrax{namespace Noise
 			        CfgFileManager::_getFloatValue(CfgFile,"Perlin_Scale"),
 					CfgFileManager::_getFloatValue(CfgFile,"Perlin_Falloff"),
 					CfgFileManager::_getFloatValue(CfgFile,"Perlin_Animspeed"),
-					CfgFileManager::_getFloatValue(CfgFile,"Perlin_Timemulti")));
+					CfgFileManager::_getFloatValue(CfgFile,"Perlin_Timemulti"),
+					CfgFileManager::_getFloatValue(CfgFile,"Perlin_Strength"),
+					Ogre::Vector3::ZERO));
 		return true;
 	}
 
@@ -161,6 +164,7 @@ namespace Hydrax{namespace Noise
         cl_uint octaves = (unsigned int)mOptions.Octaves;
         cl_float4 w;
         w.x=world.x; w.y=world.y; w.z=world.z; w.w=0.f;
+        float strength = mOptions.GPU_Strength;
         clFlag |= sendData(mComQueue[0], clNoise, p_noise, np_size_sq*(max_octaves>>(n_packsize-1))*sizeof( cl_int ));
         if(clFlag != CL_SUCCESS) {
             HydraxLOG("Can't send noise to perlin computation.");
@@ -169,9 +173,10 @@ namespace Hydrax{namespace Noise
         clFlag |= sendArgument(kHeight,  0, sizeof(cl_mem   ), (void*)&v);
         clFlag |= sendArgument(kHeight,  1, sizeof(cl_mem   ), (void*)&clNoise);
         clFlag |= sendArgument(kHeight,  2, sizeof(cl_float4), (void*)&world);
-        clFlag |= sendArgument(kHeight,  3, sizeof(cl_float ), (void*)&magnitude);
-        clFlag |= sendArgument(kHeight,  4, sizeof(cl_uint  ), (void*)&octaves);
-        clFlag |= sendArgument(kHeight,  5, sizeof(cl_uint2 ), (void*)&N);
+        clFlag |= sendArgument(kHeight,  3, sizeof(cl_float ), (void*)&strength);
+        clFlag |= sendArgument(kHeight,  4, sizeof(cl_float ), (void*)&magnitude);
+        clFlag |= sendArgument(kHeight,  5, sizeof(cl_uint  ), (void*)&octaves);
+        clFlag |= sendArgument(kHeight,  6, sizeof(cl_uint2 ), (void*)&N);
         if(clFlag != CL_SUCCESS) {
             HydraxLOG("Can't send arguments to perlin computation.");
             return false;

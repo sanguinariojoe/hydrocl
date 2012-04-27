@@ -174,7 +174,7 @@ __kernel void geometry( _g vec* vertexes, vec corner0, vec corner1, vec corner2,
 	// Set vertexes, but delegating all heigh operation to following kernels
     vertexes[id].x = result.x;
     vertexes[id].z = result.z;
-    vertexes[id].y = 0.f;
+    // vertexes[id].y = 0.f;
 	vertexes[id].w = 1.f;
 
 	// ---- A ---- Your code here ---- A ----

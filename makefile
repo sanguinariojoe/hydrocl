@@ -89,7 +89,7 @@ SRCOBJPREFIX = src/hydrocl/
 # Objects
 # ----------------------------------------
 OBJPREFIX = obj/Release/
-OBJECTS = $(OBJPREFIX)HydrOCLGrid.o $(OBJPREFIX)HydrOCLPerlin.o $(OBJPREFIX)HydrOCLUtils.o
+OBJECTS = $(OBJPREFIX)HydrOCLGrid.o $(OBJPREFIX)HydrOCLNoise.o $(OBJPREFIX)HydrOCLPerlin.o $(OBJPREFIX)HydrOCLUtils.o
 
 # -------- Compiling targets -----------------------------------------------------
 # all target:
@@ -108,6 +108,9 @@ $(OUTPUT): $(OBJECTS)
 $(OBJPREFIX)HydrOCLGrid.o:
 	@echo "\033[1;1;32m Compiling $@. \033[0m"
 	$(CC) $(CFLAGS) -o $@ $(SRCOBJPREFIX)HydrOCLGrid.cpp
+$(OBJPREFIX)HydrOCLNoise.o:
+	@echo "\033[1;1;32m Compiling $@. \033[0m"
+	$(CC) $(CFLAGS) -o $@ $(SRCOBJPREFIX)HydrOCLNoise.cpp
 $(OBJPREFIX)HydrOCLPerlin.o:
 	@echo "\033[1;1;32m Compiling $@. \033[0m"
 	$(CC) $(CFLAGS) -o $@ $(SRCOBJPREFIX)HydrOCLPerlin.cpp

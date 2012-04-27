@@ -293,21 +293,6 @@ protected:
 			                              Ogre::Plane(Ogre::Vector3(0,1,0), Ogre::Vector3(0,0,0)),
 			                              // Projected grid options
 			                              Hydrax::Module::HydrOCL::Options(/*Generic one*/));
-		/* Not implemented yet
-        // Add some waves
-        static_cast<Hydrax::Noise::Real*>(mModule->getNoise())->addWave(
-                                                Ogre::Vector2(1.f,0.f),
-                                                0.3f,
-                                                10.f);
-        static_cast<Hydrax::Noise::Real*>(mModule->getNoise())->addWave(
-                                                Ogre::Vector2(0.85f,0.15f),
-                                                0.15f,
-                                                8.f);
-        static_cast<Hydrax::Noise::Real*>(mModule->getNoise())->addWave(
-                                                Ogre::Vector2(0.95f,0.1f),
-                                                0.1f,
-                                                7.f);
-		*/
 
 		// Set our module
 		mHydrax->setModule(static_cast<Hydrax::Module::Module*>(mModule));
@@ -320,6 +305,29 @@ protected:
 
         // Create water
         mHydrax->create();
+
+		// Add some waves (ADD WAVES BEFORE CREATE HYDRAX, OPENCL MUST BE READY)
+		unsigned int i, nWaves = 25;
+		// Direction dispersion
+		Ogre::Vector2 minDir=Ogre::Vector2(1.f,-0.2f), maxDir=Ogre::Vector2(1.f,0.2f); 
+		// Amplitude dispersion (period will be related).
+		float minA = 0.15f, maxA = 0.4f;
+		float minT = 7.0f, maxT = 10.f, varT = 1.f;
+		// Phase dispersion
+		float varP = 2.f*M_PI;
+		for(i=0;i<nWaves;i++){
+			Ogre::Vector2 dir;
+			dir.x = Ogre::Math::RangeRandom(minDir.x, maxDir.x);
+			dir.y = Ogre::Math::RangeRandom(minDir.y, maxDir.y);
+			dir.normalise();
+			float A = Ogre::Math::RangeRandom(minA, maxA);
+			float factor = (maxA - A) / (maxA - minA);
+			float T = (1.f-factor)*minT + factor*maxT;
+			T = Ogre::Math::RangeRandom(T - 0.5f*varT, T + 0.5f*varT);
+			float P = Ogre::Math::RangeRandom(0.f, varP);
+			Hydrax::Noise::HydrOCLNoise::Wave w = Hydrax::Noise::HydrOCLNoise::Wave(dir,A,T,P);
+		    static_cast<Hydrax::Noise::HydrOCLNoise*>(mModule->getNoise())->addWave(w);
+		}
 
 		// Hydrax initialization code end -----------------------------------------
 		// ------------------------------------------------------------------------
